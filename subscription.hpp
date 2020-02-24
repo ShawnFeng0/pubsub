@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "node.hpp"
+#include "base/node.hpp"
 
 namespace PubSub {
 template <typename T> class Subscription : public Callback, private Node<T> {

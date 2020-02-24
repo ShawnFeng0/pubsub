@@ -5,7 +5,7 @@
 #include <ulog/ulog.h>
 #include <unistd.h>
 
-#include "../condition_variable.hpp"
+#include "../base/condition_variable.hpp"
 #include "../publication.hpp"
 #include "../subscription.hpp"
 

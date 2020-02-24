@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "mutex.hpp"
-#include "node.hpp"
+#include "base/mutex.hpp"
+#include "base/node.hpp"
 
 namespace PubSub {
 template <typename T> class PublicationData : private Node<T> {
