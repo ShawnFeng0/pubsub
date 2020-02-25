@@ -32,9 +32,10 @@ void *PubThread(void *) {
 void *SubThread(void *) {
   PubSub::SubscriptionData<data> sub{};
   PubSub::MonoClockSemaphore sem(0);
-  sub.RegisterCallback([&]() { sem.release(); });
+  sub.RegisterCallback([&]() { sem.release(); }, true);
   int i = 0;
   while (i < 10) {
+    sem.acquire();
     if (sub.Update()) {
       i++;
       LOG_TOKEN(sub.get().a);
@@ -43,7 +44,6 @@ void *SubThread(void *) {
       LOG_TOKEN(sub.get().d);
     } else {
       LOG_INFO("Not updated, waiting");
-      sem.acquire();
     }
   }
   return nullptr;
