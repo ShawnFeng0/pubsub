@@ -18,7 +18,6 @@ struct data {
 
 void *PubThread(void *) {
   PubSub::PublicationData<data> pub{};
-  LOG_TOKEN(sizeof(pub));
   for (int i = 0; i < 10; i++) {
     pub.get().a += 1;
     pub.get().b += 10;
@@ -34,8 +33,6 @@ void *SubThread(void *) {
   PubSub::SubscriptionData<data> sub{};
   PubSub::MonoClockSemaphore sem(0);
   sub.RegisterCallback([&]() { sem.release(); });
-  LOG_TOKEN(sizeof(sub));
-  LOG_TOKEN(sizeof(sem));
   int i = 0;
   while (i < 10) {
     if (sub.Update()) {
@@ -53,7 +50,6 @@ void *SubThread(void *) {
 }
 
 int main(int argc, char *argv[]) {
-  LOG_INFO("test");
   pthread_t tid;
   pthread_create(&tid, nullptr, PubThread, nullptr);
   pthread_create(&tid, nullptr, SubThread, nullptr);
