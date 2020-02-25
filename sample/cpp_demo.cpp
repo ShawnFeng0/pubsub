@@ -31,7 +31,7 @@ void *PubThread(void *) {
 }
 
 void *SubThread(void *) {
-  PubSub::Subscription<data> sub{};
+  PubSub::SubscriptionData<data> sub{};
   PubSub::MonoClockSemaphore sem(0);
   sub.RegisterCallback([&]() { sem.release(); });
   LOG_TOKEN(sizeof(sub));

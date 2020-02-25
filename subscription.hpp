@@ -7,7 +7,7 @@
 #include "base/node.hpp"
 
 namespace PubSub {
-template <typename T> class Subscription : public Callback, private Node<T> {
+template <typename T> class SubscriptionData : public Callback, private Node<T> {
 public:
   void RegisterCallback(const PubSub::CallbackPtr& cb) {
     MutexGuard lg(Node<T>::lock_);
@@ -36,7 +36,7 @@ public:
 
   const T &get() const { return data_; }
 
-  virtual ~Subscription() { UnregisterCallback(); }
+  virtual ~SubscriptionData() { UnregisterCallback(); }
 
   void UnregisterCallback() {
     MutexGuard lg(Node<T>::lock_);
