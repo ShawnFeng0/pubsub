@@ -7,9 +7,9 @@
 #include "base/node.hpp"
 
 namespace PubSub {
-template <typename T> class SubscriptionData : public Callback, private Node<T> {
+template <typename T> class SubscriptionData : private Callback, private Node<T> {
 public:
-  void RegisterCallback(const PubSub::CallbackPtr& cb) {
+  void RegisterCallback(const PubSub::CallbackPtr& cb, bool instantly = false) {
     MutexGuard lg(Node<T>::lock_);
 
     // Avoid duplicate additions
@@ -17,6 +17,10 @@ public:
 
     this->call = cb;
     Node<T>::callbacks_.add(this);
+
+    // If data is already available and needs to be updated immediately
+    if (instantly && Valid() && call )
+      call();
   }
 
   bool Valid() {

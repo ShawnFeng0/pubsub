@@ -18,7 +18,6 @@ struct data {
 
 void *PubThread(void *) {
   PubSub::PublicationData<data> pub{};
-  LOG_TOKEN(sizeof(pub));
   for (int i = 0; i < 10; i++) {
     pub.get().a += 1;
     pub.get().b += 10;
@@ -33,11 +32,10 @@ void *PubThread(void *) {
 void *SubThread(void *) {
   PubSub::SubscriptionData<data> sub{};
   PubSub::MonoClockSemaphore sem(0);
-  sub.RegisterCallback([&]() { sem.release(); });
-  LOG_TOKEN(sizeof(sub));
-  LOG_TOKEN(sizeof(sem));
+  sub.RegisterCallback([&]() { sem.release(); }, true);
   int i = 0;
   while (i < 10) {
+    sem.acquire();
     if (sub.Update()) {
       i++;
       LOG_TOKEN(sub.get().a);
@@ -46,14 +44,12 @@ void *SubThread(void *) {
       LOG_TOKEN(sub.get().d);
     } else {
       LOG_INFO("Not updated, waiting");
-      sem.acquire();
     }
   }
   return nullptr;
 }
 
 int main(int argc, char *argv[]) {
-  LOG_INFO("test");
   pthread_t tid;
   pthread_create(&tid, nullptr, PubThread, nullptr);
   pthread_create(&tid, nullptr, SubThread, nullptr);
