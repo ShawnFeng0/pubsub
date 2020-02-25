@@ -18,9 +18,6 @@ public:
     for (auto item : Node<T>::callbacks_) {
       if (item->call)
         item->call();
-      else {
-        LOG_INFO("callback is nullptr");
-      }
     }
   }
 
