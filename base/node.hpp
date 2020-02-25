@@ -6,11 +6,10 @@
 
 #include "list.hpp"
 #include "mutex.hpp"
-#include <functional>
 
 namespace PubSub {
 
-typedef std::function<void(void)> CallbackPtr;
+typedef void(*CallbackPtr)(void);
 
 struct Callback : public ListNode<Callback *> {
   CallbackPtr call = nullptr;
