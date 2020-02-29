@@ -9,6 +9,10 @@
 namespace PubSub {
 template <typename T> class SubscriptionData : private Callback, private Node<T> {
 public:
+  SubscriptionData() {}
+  SubscriptionData(const PubSub::CallbackPtr& cb) {
+    RegisterCallback(cb, false);
+  }
   void RegisterCallback(const PubSub::CallbackPtr& cb, bool instantly = false) {
     MutexGuard lg(Node<T>::lock_);
 
