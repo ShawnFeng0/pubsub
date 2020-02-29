@@ -30,12 +30,10 @@ void *PubThread(void *) {
 }
 
 void *SubThread(void *) {
-  PubSub::SubscriptionData<data> sub{};
   PubSub::MonoClockSemaphore sem(0);
-  sub.RegisterCallback([&]() { sem.release(); }, true);
+  PubSub::SubscriptionData<data> sub([&]() { sem.release(); }, 2 * 1000*1000);
   int i = 0;
   while (i < 10) {
-    sem.acquire();
     if (sub.Update()) {
       i++;
       LOG_TOKEN(sub.get().a);
@@ -45,6 +43,7 @@ void *SubThread(void *) {
     } else {
       LOG_INFO("Not updated, waiting");
     }
+    sem.acquire(); // Use Update () first to avoid not being notified of the first update
   }
   return nullptr;
 }
