@@ -12,11 +12,11 @@ namespace PubSub {
 template <typename T>
 class SubscriptionData : private Callback, private Node<T> {
  public:
-  SubscriptionData(const PubSub::CallbackPtr& cb = nullptr,
+  SubscriptionData(const PubSub::CallbackPtr& cb = nullptr, bool instantly = false,
                    uint32_t interval_us = 0)
       : interval_us_(interval_us) {
     if (cb != nullptr) {
-      RegisterCallback(cb, false);
+      RegisterCallback(cb, instantly);
     }
   }
   void RegisterCallback(const PubSub::CallbackPtr& cb, bool instantly = false) {

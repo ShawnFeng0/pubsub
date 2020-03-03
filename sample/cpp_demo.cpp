@@ -31,11 +31,11 @@ void *PubThread(void *) {
 
 void *SubThread(void *) {
   PubSub::MonoClockSemaphore sem(0);
-  PubSub::SubscriptionData<data> sub([&]() { sem.release(); }, 2 * 1000 * 1000);
-  int i = 0;
-  while (i < 10) {
+  PubSub::SubscriptionData<data> sub([&]() { sem.release(); }, true);
+
+  for (int i = 0; i < 10; i++) {
+    // first update
     if (sub.Update()) {
-      i++;
       LOG_TOKEN(sub.get().a);
       LOG_TOKEN(sub.get().b);
       LOG_TOKEN(sub.get().c);
