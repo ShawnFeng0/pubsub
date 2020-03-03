@@ -23,7 +23,7 @@ void *PubThread(void *) {
     pub.get().b += 10;
     pub.get().c += 100;
     pub.get().d += 1000;
-    pub.Publish();
+    pub.PublishChange();
     sleep(1);
   }
   return nullptr;
@@ -31,7 +31,7 @@ void *PubThread(void *) {
 
 void *SubThread(void *) {
   PubSub::MonoClockSemaphore sem(0);
-  PubSub::SubscriptionData<data> sub([&]() { sem.release(); }, 2 * 1000*1000);
+  PubSub::SubscriptionData<data> sub([&]() { sem.release(); }, 2 * 1000 * 1000);
   int i = 0;
   while (i < 10) {
     if (sub.Update()) {
@@ -43,7 +43,8 @@ void *SubThread(void *) {
     } else {
       LOG_INFO("Not updated, waiting");
     }
-    sem.acquire(); // Use Update () first to avoid not being notified of the first update
+    sem.acquire();  // Use Update () first to avoid not being notified of the
+                    // first update
   }
   return nullptr;
 }
