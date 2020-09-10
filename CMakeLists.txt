@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.13)
-project(cpp_test)
+project(pub_sub)
 
 set(CMAKE_C_STANDARD 11)
 

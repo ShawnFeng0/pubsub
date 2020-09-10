@@ -8,16 +8,21 @@
 #include "base/node.hpp"
 
 namespace PubSub {
-template <typename T> class PublicationData : private Node<T> {
-public:
-
+template <typename T>
+class PublicationData : private Node<T> {
+ public:
   void Publish() {
     MutexGuard lg(Node<T>::lock_);
     Node<T>::data_ = data_;
     Node<T>::generation_++;
     for (auto item : Node<T>::callbacks_) {
-      if (item->call)
-        item->call();
+      if (item->call) item->call();
+    }
+  }
+
+  void PublishChange() {
+    if (0 != memcmp(&Node<T>::data_, &data_, sizeof(data_))) {
+      Publish();
     }
   }
 
@@ -28,7 +33,7 @@ public:
     return this;
   }
 
-private:
+ private:
   T data_;
 };
-} // namespace PubSub
+}  // namespace PubSub

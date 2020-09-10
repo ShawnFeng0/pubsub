@@ -23,28 +23,28 @@ void *PubThread(void *) {
     pub.get().b += 10;
     pub.get().c += 100;
     pub.get().d += 1000;
-    pub.Publish();
+    pub.PublishChange();
     sleep(1);
   }
   return nullptr;
 }
 
 void *SubThread(void *) {
-  PubSub::SubscriptionData<data> sub{};
   PubSub::MonoClockSemaphore sem(0);
-  sub.RegisterCallback([&]() { sem.release(); }, true);
-  int i = 0;
-  while (i < 10) {
-    sem.acquire();
+  PubSub::SubscriptionData<data> sub([&]() { sem.release(); }, true);
+
+  for (int i = 0; i < 10; i++) {
+    // first update
     if (sub.Update()) {
-      i++;
-      LOG_TOKEN(sub.get().a);
-      LOG_TOKEN(sub.get().b);
-      LOG_TOKEN(sub.get().c);
-      LOG_TOKEN(sub.get().d);
+      LOGGER_TOKEN(sub.get().a);
+      LOGGER_TOKEN(sub.get().b);
+      LOGGER_TOKEN(sub.get().c);
+      LOGGER_TOKEN(sub.get().d);
     } else {
-      LOG_INFO("Not updated, waiting");
+      LOGGER_INFO("Not updated, waiting");
     }
+    sem.acquire();  // Use Update () first to avoid not being notified of the
+                    // first update
   }
   return nullptr;
 }
