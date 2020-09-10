@@ -9,20 +9,31 @@
 
 namespace PubSub {
 
-typedef void(*CallbackPtr)(void);
+typedef void (*CallbackPtr)(void *);
 
 struct Callback : public ListNode<Callback *> {
-  CallbackPtr call = nullptr;
+  CallbackPtr callback_ptr_ = nullptr;
+  void *callback_data_ = nullptr;
 };
+
+// The template is used only to define unique global variables in the header
+// file.
+template <class Type>
+struct StaticValue {
+  static Type value;
+};
+
+template <class Type>
+Type StaticValue<Type>::value;
 
 template <typename T>
 class Node {
-protected:
+ protected:
   // The following data are unique in the same topic
   static T data_;
   static unsigned generation_;
   static List<Callback *> callbacks_;
-  static Mutex lock_;
+  static Mutex &lock_;
 };
 
 template <typename T>
@@ -35,6 +46,6 @@ template <typename T>
 List<Callback *> Node<T>::callbacks_;
 
 template <typename T>
-PubSub::Mutex Node<T>::lock_;
+PubSub::Mutex &Node<T>::lock_ = StaticValue<Mutex>::value;
 
-} // namespace PubSub
+}  // namespace PubSub

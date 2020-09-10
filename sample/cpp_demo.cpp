@@ -31,7 +31,9 @@ void *PubThread(void *) {
 
 void *SubThread(void *) {
   PubSub::MonoClockSemaphore sem(0);
-  PubSub::SubscriptionData<data> sub([&]() { sem.release(); }, true);
+  PubSub::SubscriptionData<data> sub(
+      [](void *data) { ((PubSub::MonoClockSemaphore *)data)->release(); }, &sem,
+      true);
 
   for (int i = 0; i < 10; i++) {
     // first update

@@ -12,24 +12,28 @@ namespace PubSub {
 template <typename T>
 class SubscriptionData : private Callback, private Node<T> {
  public:
-  SubscriptionData(const PubSub::CallbackPtr& cb = nullptr, bool instantly = false,
+  SubscriptionData(const PubSub::CallbackPtr& cb = nullptr,
+                   void* callback_data = nullptr, bool instantly = false,
                    uint32_t interval_us = 0)
       : interval_us_(interval_us) {
     if (cb != nullptr) {
-      RegisterCallback(cb, instantly);
+      RegisterCallback(cb, callback_data, instantly);
     }
   }
-  void RegisterCallback(const PubSub::CallbackPtr& cb, bool instantly = false) {
+
+  void RegisterCallback(const PubSub::CallbackPtr& cb, void* callback_data,
+                        bool instantly = false) {
     MutexGuard lg(Node<T>::lock_);
 
     // Avoid duplicate additions
     Node<T>::callbacks_.remove(this);
 
-    this->call = cb;
+    this->callback_ptr_ = cb;
+    this->callback_data_ = callback_data;
     Node<T>::callbacks_.add(this);
 
     // If data is already available and needs to be updated immediately
-    if (instantly && Valid() && call) call();
+    if (instantly && Valid() && callback_ptr_) callback_ptr_(callback_data);
   }
 
   bool Valid() {

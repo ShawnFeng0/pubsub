@@ -16,7 +16,7 @@ class PublicationData : private Node<T> {
     Node<T>::data_ = data_;
     Node<T>::generation_++;
     for (auto item : Node<T>::callbacks_) {
-      if (item->call) item->call();
+      if (item->callback_ptr_) item->callback_ptr_(item->callback_data_);
     }
   }
 
