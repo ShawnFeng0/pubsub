@@ -36,12 +36,12 @@ void *SubThread(void *) {
   for (int i = 0; i < 10; i++) {
     // first update
     if (sub.Update()) {
-      LOG_TOKEN(sub.get().a);
-      LOG_TOKEN(sub.get().b);
-      LOG_TOKEN(sub.get().c);
-      LOG_TOKEN(sub.get().d);
+      LOGGER_TOKEN(sub.get().a);
+      LOGGER_TOKEN(sub.get().b);
+      LOGGER_TOKEN(sub.get().c);
+      LOGGER_TOKEN(sub.get().d);
     } else {
-      LOG_INFO("Not updated, waiting");
+      LOGGER_INFO("Not updated, waiting");
     }
     sem.acquire();  // Use Update () first to avoid not being notified of the
                     // first update
